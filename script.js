@@ -1,3 +1,17 @@
+const tasks = [
+	{ id: 0, category: 'work', text: 'make a call' },
+	{ id: 1, category: 'home', text: 'pay rent' },
+	{ id: 2, category: 'kids', text: 'buy LEGO' },
+	{ id: 3, category: 'other', text: 'walk the dog' },
+];
+
+const categoryIcon = {
+	work: 'briefcase',
+	home: 'home',
+	kids: 'child',
+	other: 'tasks',
+};
+
 let todoInput;
 let errorInfo;
 let addBtn;
@@ -13,6 +27,7 @@ let popupCloseBtn;
 const main = () => {
 	prepareDOMElements();
 	prepareDOMEvents();
+	render();
 };
 
 const prepareDOMElements = () => {
@@ -23,6 +38,7 @@ const prepareDOMElements = () => {
 	popup = document.querySelector('.popup');
 	popupInfo = document.querySelector('.popup-info');
 	popupInput = document.querySelector('.popup-input');
+	popupTaskCategory = document.querySelector('#popup-task-category');
 	popupAddBtn = document.querySelector('.accept');
 	popupCloseBtn = document.querySelector('.cancel');
 	categorySelect = document.querySelector('#task-category');
@@ -31,28 +47,26 @@ const prepareDOMElements = () => {
 };
 
 const prepareDOMEvents = () => {
-	addBtn.addEventListener('click', addNewTodo);
+	addBtn.addEventListener('click', addTask);
 	ulList.addEventListener('click', checkClick);
 	popupCloseBtn.addEventListener('click', closePopup);
 	popupAddBtn.addEventListener('click', changeTodoText);
 	todoInput.addEventListener('keyup', enterKeycheck);
 };
 
-const addNewTodo = () => {
+const addTask = () => {
 	errorInfo.textContent = '';
 
 	if (todoInput.value !== '' && categorySelect.value !== '0') {
-		newTodo = document.createElement('li');
-		const taskPanel = document.createElement('div');
-		taskPanel.classList.add('task');
-		taskPanel.innerHTML = `<i class="category-icon fas fa-${categorySelect.value}"></i> ${todoInput.value}`;
-
-		newTodo.append(taskPanel);
-
-		createToolsArea(newTodo);
-		ulList.append(newTodo);
+		const newTask = {
+			id: tasks.length,
+			category: categorySelect.value,
+			text: todoInput.value,
+		};
+		renderTask(newTask);
 
 		todoInput.value = '';
+		categorySelect.value = '0';
 		errorInfo.textContent = '';
 	} else if (todoInput.value !== '' && categorySelect.value === '0') {
 		errorInfo.textContent = 'Select task category!';
@@ -63,10 +77,27 @@ const addNewTodo = () => {
 	}
 };
 
-const createToolsArea = () => {
+const renderTask = ({ id, category, text }) => {
+	const task = document.createElement('li');
+	const taskPanel = document.createElement('div');
+	taskPanel.classList.add('task');
+	taskPanel.innerHTML = `<i class="category-icon fas fa-${categoryIcon[category]}"></i> ${text}`;
+
+	task.id = id;
+	task.append(taskPanel);
+
+	createToolsArea(task);
+	ulList.append(task);
+};
+
+const render = () => {
+	tasks.forEach(renderTask);
+};
+
+const createToolsArea = task => {
 	const toolsPanel = document.createElement('div');
 	toolsPanel.classList.add('tools');
-	newTodo.append(toolsPanel);
+	task.append(toolsPanel);
 
 	const completeBtn = document.createElement('button');
 	completeBtn.classList.add('complete');
@@ -96,7 +127,12 @@ const checkClick = e => {
 
 const editTodo = e => {
 	todoToEdit = e.target.closest('li');
-	popupInput.value = todoToEdit.firstChild.textContent;
+	const taskId = todoToEdit.id;
+	const task = tasks.find(task => task.id == taskId);
+
+	popupInput.value = task.text;
+	popupTaskCategory.value = task.category;
+
 	popup.style.display = 'flex';
 };
 
@@ -106,7 +142,15 @@ const closePopup = () => {
 
 const changeTodoText = () => {
 	if (popupInput.value !== '') {
-		todoToEdit.firstChild.textContent = popupInput.value;
+		const taskId = todoToEdit.id;
+		const task = tasks.find(task => task.id == taskId);
+
+		task.category = popupTaskCategory.value;
+		task.text = popupInput.value;
+
+		todoToEdit.firstChild.innerHTML = `<i class="category-icon fas fa-${categoryIcon[task.category]}"></i> ${
+			task.text
+		}`;
 		popup.style.display = 'none';
 		popupInfo.textContent = ' ';
 	} else {

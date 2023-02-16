@@ -21,40 +21,16 @@
             <input type="text" class="todo-input" placeholder="Enter task name...">
             <select id="task-category">
                 <option value="0" class="category-option" selected disabled> -select category- </option>
-                <option value="briefcase" class="category-option"><i class="fas fa-briefcase"></i> Work</option>
+                <option value="work" class="category-option"><i class="fas fa-briefcase"></i> Work</option>
                 <option value="home" class="category-option"><i class="fas fa-home"></i> Home</option>
-                <option value="child" class="category-option"><i class="fas fa-child"></i> Kids</option>
-                <option value="tasks" class="category-option"><i class="fas fa-tasks"></i> Other</option>
+                <option value="kids" class="category-option"><i class="fas fa-child"></i> Kids</option>
+                <option value="other" class="category-option"><i class="fas fa-tasks"></i> Other</option>
             </select>
             <button class="btn-add">Add</button>
         </div>
         <div class="todolist">
             <p class="error-info"></p>
             <ul>
-                <li data-id='test1'>
-                    <div class="task"><i class="category-icon fas fa-tasks"></i> Walk the dog</div>
-                    <div class="tools">
-                        <button class="complete"><i class="fas fa-check"></i></button>
-                        <button class="edit">EDIT</button>
-                        <button class="delete"><i class="fas fa-times"></i></button>
-                    </div>
-                </li>
-                <li data-id='test2'>
-                    <div class="task"><i class="category-icon fas fa-home"></i> Go to the grocery</div>
-                    <div class="tools">
-                        <button class="complete"><i class="fas fa-check"></i></button>
-                        <button class="edit">EDIT</button>
-                        <button class="delete"><i class="fas fa-times"></i></button>
-                    </div>
-                </li>
-                <li data-id='test3'>
-                    <div class="task"><i class="category-icon fas fa-home"></i> Pay rent</div>
-                    <div class="tools">
-                        <button class="complete"><i class="fas fa-check"></i></button>
-                        <button class="edit">EDIT</button>
-                        <button class="delete"><i class="fas fa-times"></i></button>
-                    </div>
-                </li>
             </ul>
         </div>
     </div>
@@ -65,11 +41,11 @@
             <p class="popup-info"></p>
             <input type="text" class="popup-input" placeholder="Enter new task name...">
             <select id="popup-task-category">
-                <option selected disabled> -select category- </option>
-                <option><i class="fas fa-briefcase"></i> Work</option>
-                <option><i class="fas fa-home"></i> Home</option>
-                <option><i class="fas fa-child"></i> Kids</option>
-                <option><i class="fas fa-tasks"></i> Other</option>
+                <option value="0" class="category-option" selected disabled> -select category- </option>
+                <option value="work" class="category-option"><i class="fas fa-briefcase"></i> Work</option>
+                <option value="home" class="category-option"><i class="fas fa-home"></i> Home</option>
+                <option value="kids" class="category-option"><i class="fas fa-child"></i> Kids</option>
+                <option value="other" class="category-option"><i class="fas fa-tasks"></i> Other</option>
             </select>
             <button class="popup-btn accept">Confirm</button>
             <button class="popup-btn cancel">Decline</button>
