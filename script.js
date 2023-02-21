@@ -1,9 +1,4 @@
-const tasks = [
-	{ id: 0, category: 'work', text: 'make a call' },
-	{ id: 1, category: 'home', text: 'pay rent' },
-	{ id: 2, category: 'kids', text: 'buy LEGO' },
-	{ id: 3, category: 'other', text: 'walk the dog' },
-];
+const tasks = [];
 
 const categoryIcon = {
 	work: 'briefcase',
@@ -59,11 +54,12 @@ const addTask = () => {
 
 	if (todoInput.value !== '' && categorySelect.value !== '0') {
 		const newTask = {
-			id: tasks.length,
+			id: crypto.randomUUID(),
 			category: categorySelect.value,
 			text: todoInput.value,
 		};
 		renderTask(newTask);
+		tasks.push(newTask);
 
 		todoInput.value = '';
 		categorySelect.value = '0';
@@ -77,7 +73,7 @@ const addTask = () => {
 	}
 };
 
-const renderTask = ({ id, category, text }) => {
+const renderTask = ({ id, category, text, isDone }) => {
 	const task = document.createElement('li');
 	const taskPanel = document.createElement('div');
 	taskPanel.classList.add('task');
@@ -85,6 +81,10 @@ const renderTask = ({ id, category, text }) => {
 
 	task.id = id;
 	task.append(taskPanel);
+
+	if (isDone) {
+		task.classList.add('completed');
+	}
 
 	createToolsArea(task);
 	ulList.append(task);
@@ -114,10 +114,20 @@ const createToolsArea = task => {
 	toolsPanel.append(completeBtn, editBtn, deleteBtn);
 };
 
+const toggleTask = e => {
+	const taskToToggle = e.target.closest('li');
+	const taskId = taskToToggle.id;
+	const task = tasks.find(task => task.id == taskId);
+
+	task.isDone = !task.isDone;
+
+	e.target.closest('li').classList.toggle('completed');
+	e.target.classList.toggle('completed');
+};
+
 const checkClick = e => {
 	if (e.target.matches('.complete')) {
-		e.target.closest('li').classList.toggle('completed');
-		e.target.classList.toggle('completed');
+		toggleTask(e);
 	} else if (e.target.matches('.edit')) {
 		editTodo(e);
 	} else if (e.target.matches('.delete')) {
@@ -157,14 +167,20 @@ const changeTodoText = () => {
 		popupInfo.textContent = 'Podaj treść';
 	}
 };
+
 const deleteTodo = e => {
-	e.target.closest('li').remove();
+	const taskToDelete = e.target.closest('li');
+	const taskId = taskToDelete.id;
+	taskToDelete.remove();
 
 	const allTodos = ulList.querySelectorAll('li');
 
 	if (allTodos.length === 0) {
 		errorInfo.textContent = 'No task to do ;)';
 	}
+
+	const taskIndex = tasks.findIndex(task => task.id == taskId);
+	tasks.splice(taskIndex, 1);
 };
 
 const enterKeycheck = e => {
