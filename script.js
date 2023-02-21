@@ -1,4 +1,5 @@
-const tasks = [];
+const LOCALSTORAGE_KEY = 'tasks';
+const TASKS = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || [];
 
 const categoryIcon = {
 	work: 'briefcase',
@@ -49,6 +50,10 @@ const prepareDOMEvents = () => {
 	todoInput.addEventListener('keyup', enterKeycheck);
 };
 
+const updateStorage = () => {
+	localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(TASKS));
+};
+
 const addTask = () => {
 	errorInfo.textContent = '';
 
@@ -57,9 +62,12 @@ const addTask = () => {
 			id: crypto.randomUUID(),
 			category: categorySelect.value,
 			text: todoInput.value,
+			isDone: false,
 		};
 		renderTask(newTask);
-		tasks.push(newTask);
+		TASKS.push(newTask);
+
+		updateStorage();
 
 		todoInput.value = '';
 		categorySelect.value = '0';
@@ -91,7 +99,7 @@ const renderTask = ({ id, category, text, isDone }) => {
 };
 
 const render = () => {
-	tasks.forEach(renderTask);
+	TASKS.forEach(renderTask);
 };
 
 const createToolsArea = task => {
@@ -117,12 +125,14 @@ const createToolsArea = task => {
 const toggleTask = e => {
 	const taskToToggle = e.target.closest('li');
 	const taskId = taskToToggle.id;
-	const task = tasks.find(task => task.id == taskId);
+	const task = TASKS.find(task => task.id == taskId);
 
 	task.isDone = !task.isDone;
 
 	e.target.closest('li').classList.toggle('completed');
 	e.target.classList.toggle('completed');
+
+	updateStorage();
 };
 
 const checkClick = e => {
@@ -138,7 +148,7 @@ const checkClick = e => {
 const editTodo = e => {
 	todoToEdit = e.target.closest('li');
 	const taskId = todoToEdit.id;
-	const task = tasks.find(task => task.id == taskId);
+	const task = TASKS.find(task => task.id == taskId);
 
 	popupInput.value = task.text;
 	popupTaskCategory.value = task.category;
@@ -153,10 +163,12 @@ const closePopup = () => {
 const changeTodoText = () => {
 	if (popupInput.value !== '') {
 		const taskId = todoToEdit.id;
-		const task = tasks.find(task => task.id == taskId);
+		const task = TASKS.find(task => task.id == taskId);
 
 		task.category = popupTaskCategory.value;
 		task.text = popupInput.value;
+
+		updateStorage();
 
 		todoToEdit.firstChild.innerHTML = `<i class="category-icon fas fa-${categoryIcon[task.category]}"></i> ${
 			task.text
@@ -179,8 +191,10 @@ const deleteTodo = e => {
 		errorInfo.textContent = 'No task to do ;)';
 	}
 
-	const taskIndex = tasks.findIndex(task => task.id == taskId);
-	tasks.splice(taskIndex, 1);
+	const taskIndex = TASKS.findIndex(task => task.id == taskId);
+	TASKS.splice(taskIndex, 1);
+
+	updateStorage();
 };
 
 const enterKeycheck = e => {
